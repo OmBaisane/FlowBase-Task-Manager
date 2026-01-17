@@ -1,0 +1,19 @@
+# --- MASTER GITIGNORE ---
+
+# Ignore ALL node_modules in any folder (Client or Server)
+node_modules/
+
+# Ignore Environment Variables (Security)
+.env
+
+# Ignore Build Folders
+dist/
+/out-tsc
+
+# Ignore IDE Settings
+.vscode/
+.idea/
+
+# System Files
+.DS_Store
+Thumbs.db
