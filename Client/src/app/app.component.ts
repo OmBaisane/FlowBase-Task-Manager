@@ -50,7 +50,12 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Login nahi hai, toh data fetch mat karo abhi
+    this.fetchTasks();
+
+    // Real-Time Listener 
+    this.taskService.onTaskUpdate(() => {
+      this.fetchTasks();
+    });
   }
 
   // --- AUTH FUNCTIONS ---

@@ -1,40 +1,48 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { io, Socket } from 'socket.io-client';
 
 export interface Task {
   _id?: string;
   title: string;
   username: string;
-  status: string;
-  createdAt?: string;
+  status: 'Pending' | 'In Progress' | 'Completed';
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
-  private apiUrl = 'http://localhost:5000/api/tasks'; // Backend URL
+  private apiUrl = 'http://localhost:5000/tasks';
+  private socket: Socket; // Socket Variable
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    // 1. Connect to Server
+    this.socket = io('http://localhost:5000'); 
+  }
 
-  // 1. GET 
   getTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(this.apiUrl);
   }
 
-  // 2. CREATE
   createTask(task: Task): Observable<Task> {
     return this.http.post<Task>(this.apiUrl, task);
   }
 
-  // 3. DELETE 
   deleteTask(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  // UPDATE 
   updateTask(id: string, task: Task): Observable<Task> {
     return this.http.put<Task>(`${this.apiUrl}/${id}`, task);
+  }
+
+  // --- REAL TIME LISTENER ---
+  onTaskUpdate(callback: () => void) {
+    this.socket.on('task-updated', () => {
+      console.log("Real-time Signal Mila! 🔄");
+      callback(); 
+    });
   }
 }
