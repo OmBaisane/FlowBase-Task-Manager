@@ -1,24 +1,24 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterOutlet } from '@angular/router'; 
 import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { TaskService, Task } from './services/task.service';
 import { ThemeService } from './services/theme.service';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
+import { AuthService } from './services/auth.service'; 
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, SidebarComponent, LoginComponent, RegisterComponent],
+  imports: [CommonModule, FormsModule, RouterOutlet, HeaderComponent, SidebarComponent],
   templateUrl: './app.component.html',
   styles: []
 })
 export class AppComponent implements OnInit {
   // --- AUTH STATE ---
   isLoggedIn = false;
-  showRegister = false;
+  currentUser: string = '';
 
   // --- APP STATE ---
   title = 'FlowBase';
@@ -35,7 +35,6 @@ export class AppComponent implements OnInit {
   currentTaskId = '';
   newTask: Task = { title: '', username: '', status: 'Pending' };
 
-  // --- DUMMY LOGS ---
   activityLogs = [
     { time: '10:30 AM', message: 'System Update Completed', type: 'info' },
     { time: '11:15 AM', message: 'New Task Added', type: 'success' },
@@ -45,34 +44,41 @@ export class AppComponent implements OnInit {
 
   constructor(
     private taskService: TaskService,
+    private authService: AuthService, 
+    private router: Router, 
     private cd: ChangeDetectorRef,
     public themeService: ThemeService 
   ) {}
 
   ngOnInit() {
-    this.fetchTasks();
+    // Real-Time Auth Listener (Ye hai Jadu!) 🪄
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        this.isLoggedIn = true;
+        this.currentUser = user;
+        this.fetchTasks();
+        this.router.navigate(['/']); // Dashboard par bhejo
+      } else {
+        this.isLoggedIn = false;
+        this.currentUser = '';
+        // Agar user login nahi hai aur register page par nahi hai, to login par bhejo
+        if(this.router.url !== '/register') {
+           this.router.navigate(['/login']);
+        }
+      }
+    });
 
-    // Real-Time Listener 
     this.taskService.onTaskUpdate(() => {
-      this.fetchTasks();
+      if (this.isLoggedIn) this.fetchTasks();
     });
   }
 
-  // --- AUTH FUNCTIONS ---
-  handleLogin(success: boolean) {
-    if (success) {
-      this.isLoggedIn = true;
-      this.fetchTasks(); // Data ab load karo
-    }
-  }
-
-  toggleRegister(show: boolean) {
-    this.showRegister = show;
-  }
-
-  // --- CRUD & LOGIC ---
   onMenuChange(menu: string) { this.currentView = menu; this.searchText = ''; }
   toggleDarkMode() { this.themeService.toggleTheme(); }
+  
+  logout() {
+    this.authService.logout(); // Ye automatically listener trigger karega
+  }
 
   get filteredTasks() {
     if (!this.searchText) return this.tasks;
@@ -80,7 +86,9 @@ export class AppComponent implements OnInit {
     return this.tasks.filter(t => (t.title?.toLowerCase().includes(s) || t.username?.toLowerCase().includes(s)));
   }
 
-  get myTasks() { return this.tasks.filter(t => t.username.toLowerCase().includes('rahul')); }
+  get myTasks() { 
+    return this.tasks.filter(t => t.username.toLowerCase() === this.currentUser.toLowerCase()); 
+  }
 
   calculateStats() {
     this.totalTasks = this.tasks.length;
@@ -96,12 +104,25 @@ export class AppComponent implements OnInit {
     });
   }
   
-  openModal() { this.isModalOpen = true; this.isEditing = false; this.newTask = { title: '', username: '', status: 'Pending' }; }
-  openEditModal(task: any) { this.isModalOpen = true; this.isEditing = true; this.currentTaskId = task._id; this.newTask = { ...task }; }
+  openModal() { 
+    this.isModalOpen = true; 
+    this.isEditing = false; 
+    this.newTask = { title: '', username: this.currentUser, status: 'Pending' }; 
+  }
+
+  openEditModal(task: any) { 
+    this.isModalOpen = true; 
+    this.isEditing = true; 
+    this.currentTaskId = task._id; 
+    this.newTask = { ...task }; 
+  }
+  
   closeModal() { this.isModalOpen = false; this.isEditing = false; }
 
   saveTask() {
-    if (!this.newTask.title || !this.newTask.username) { alert('Please fill all details!'); return; }
+    if (!this.newTask.title) { alert('Please enter a task title!'); return; }
+    this.newTask.username = this.currentUser;
+
     if (this.isEditing) {
       this.taskService.updateTask(this.currentTaskId, this.newTask).subscribe({
         next: (res) => {

@@ -1,18 +1,15 @@
-<div *ngIf="!isLoggedIn">
-  <div *ngIf="showRegister">
-    <app-register (switchToLogin)="toggleRegister(false)"></app-register>
-  </div>
-  <div *ngIf="!showRegister">
-    <app-login (loginSuccess)="handleLogin($event)" (switchToRegister)="toggleRegister(true)"></app-login>
-  </div>
-</div>
+<router-outlet *ngIf="!isLoggedIn"></router-outlet>
 
 <div *ngIf="isLoggedIn" class="flex h-screen bg-gray-50 dark:bg-gray-900 dark:text-gray-100 overflow-hidden transition-colors duration-300">
   
-  <app-sidebar (menuChange)="onMenuChange($event)"></app-sidebar>
+  <app-sidebar [currentView]="currentView" (menuChange)="onMenuChange($event)"></app-sidebar>
 
   <div class="flex-1 flex flex-col min-w-0">
-    <app-header></app-header>
+    <app-header 
+        [username]="currentUser" 
+        (toggleTheme)="toggleDarkMode()" 
+        (searchChange)="searchText = $event">
+    </app-header>
 
     <main class="flex-1 overflow-x-hidden overflow-y-auto p-8">
       
@@ -88,11 +85,9 @@
 
       <div *ngIf="currentView === 'mytasks'">
         <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">My Assigned Tasks</h2>
-        
         <div class="bg-white dark:bg-gray-800 dark:text-white rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6" *ngIf="myTasks.length === 0">
-             <p class="text-gray-500 dark:text-gray-400">No tasks assigned to "Rahul".</p>
+             <p class="text-gray-500 dark:text-gray-400">No tasks assigned to "{{ currentUser }}".</p>
         </div>
-
         <div class="grid grid-cols-1 gap-4">
              <div *ngFor="let task of myTasks" class="bg-white dark:bg-gray-800 dark:text-white p-4 rounded-xl shadow border border-gray-100 dark:border-gray-700 flex justify-between items-center">
                  <div>
@@ -109,7 +104,6 @@
         <div class="bg-white dark:bg-gray-800 dark:text-white rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
             <div *ngFor="let log of activityLogs" class="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center">
                 <span class="w-24 text-xs font-bold text-gray-400">{{ log.time }}</span>
-                
                 <span [ngClass]="{
                     'text-green-600 dark:text-green-400': log.type === 'success',
                     'text-red-600 dark:text-red-400': log.type === 'danger',
@@ -148,7 +142,7 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Display Name</label>
-                    <input type="text" value="Rahul" class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 bg-gray-50 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-[#0f4c5c] outline-none">
+                    <input type="text" [value]="currentUser" disabled class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 bg-gray-100 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
@@ -164,8 +158,6 @@
                         </div>
                     </button>
                 </div>
-
-                <button (click)="updateProfile()" class="bg-[#0f4c5c] text-white px-6 py-2 rounded-lg mt-4 hover:bg-[#0c3b47] transition-all">Save Changes</button>
             </div>
         </div>
       </div>
@@ -187,7 +179,7 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Assigned To</label>
-            <input [(ngModel)]="newTask.username" type="text" placeholder="e.g. Rahul" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0f4c5c] outline-none bg-white dark:bg-gray-700 dark:text-white" />
+            <input [(ngModel)]="newTask.username" disabled type="text" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-200 dark:bg-gray-900 text-gray-500 cursor-not-allowed" />
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>

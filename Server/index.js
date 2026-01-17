@@ -4,6 +4,9 @@ const cors = require('cors');
 const http = require('http'); 
 const { Server } = require("socket.io"); 
 
+// Import User Model
+const User = require('./models/User'); // <-- Ye line nayi hai
+
 const app = express();
 require('dotenv').config();
 
@@ -24,35 +27,68 @@ io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id}`);
 });
 
-// MongoDB Connection (Clean Version)
+// MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB Connected ✅'))
   .catch(err => console.log(err));
 
-// Schema
+// Task Schema (Yahi rakha hai simple rakhne ke liye)
 const taskSchema = new mongoose.Schema({
     title: String,
-    username: String,
+    username: String, // Ab hum yahan Login wale ka naam dalenge
     status: String
 }, { timestamps: true });
 
 const Task = mongoose.model('Task', taskSchema);
 
-// --- ROUTES ---
+// --- AUTH ROUTES (LOGIN & REGISTER) --- 🔐
 
-// 1. Get Tasks (Debug Mode)
+// 1. REGISTER
+app.post('/auth/register', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        // Check if user already exists
+        const existingUser = await User.findOne({ username });
+        if (existingUser) return res.status(400).json({ message: "User already exists!" });
+
+        // Create new user (Password encryption hum baad me dekhenge, abhi simple rakhte hain)
+        const newUser = new User({ username, password });
+        await newUser.save();
+        
+        res.json({ message: "Registration Successful! ✅" });
+    } catch (err) { res.status(500).json(err); }
+});
+
+// 2. LOGIN
+app.post('/auth/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        
+        // Find user
+        const user = await User.findOne({ username });
+        if (!user) return res.status(404).json({ message: "User not found!" });
+
+        // Check password (simple check for now)
+        if (user.password !== password) return res.status(400).json({ message: "Wrong Password!" });
+
+        // Success
+        res.json({ 
+            message: "Login Successful!", 
+            username: user.username,
+            _id: user._id 
+        });
+    } catch (err) { res.status(500).json(err); }
+});
+
+// --- TASK ROUTES --- ✅
+
 app.get('/tasks', async (req, res) => {
     try {
         const tasks = await Task.find().sort({ createdAt: -1 });
-        console.log("✅ Data Manga Gaya: Success"); // Pata chalega request aayi
         res.json(tasks);
-    } catch (err) { 
-        console.log("🔥 DB ERROR AA GAYA:", err.message); // Ye line error print karegi
-        res.status(500).json({ error: err.message }); 
-    }
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// 2. Create Task
 app.post('/tasks', async (req, res) => {
     try {
         const newTask = new Task(req.body);
@@ -62,7 +98,6 @@ app.post('/tasks', async (req, res) => {
     } catch (err) { res.status(500).json(err); }
 });
 
-// 3. Delete Task
 app.delete('/tasks/:id', async (req, res) => {
     try {
         await Task.findByIdAndDelete(req.params.id);
@@ -71,7 +106,6 @@ app.delete('/tasks/:id', async (req, res) => {
     } catch (err) { res.status(500).json(err); }
 });
 
-// 4. Update Task
 app.put('/tasks/:id', async (req, res) => {
     try {
         const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });

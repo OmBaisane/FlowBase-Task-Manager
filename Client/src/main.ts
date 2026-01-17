@@ -1,6 +1,12 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
+import { provideRouter } from '@angular/router';
+import { routes } from './app/app.routes'; // Tumhare routes
+import { provideHttpClient } from '@angular/common/http'; // API Call ke liye zaroori
 
-bootstrapApplication(AppComponent, appConfig)
-  .catch((err) => console.error(err));
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideRouter(routes),       // Navigation System ON
+    provideHttpClient()          // Internet/API System ON
+  ]
+}).catch((err) => console.error(err));
