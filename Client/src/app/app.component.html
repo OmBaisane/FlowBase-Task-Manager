@@ -1,81 +1,146 @@
 <router-outlet *ngIf="!isLoggedIn"></router-outlet>
 
-<div *ngIf="isLoggedIn" class="flex h-screen bg-gray-50 dark:bg-gray-900 dark:text-gray-100 overflow-hidden transition-colors duration-300">
-  
+<div
+  *ngIf="isLoggedIn"
+  class="flex h-screen bg-gray-50 dark:bg-gray-900 dark:text-gray-100 overflow-hidden transition-colors duration-300"
+>
   <app-sidebar [currentView]="currentView" (menuChange)="onMenuChange($event)"></app-sidebar>
 
   <div class="flex-1 flex flex-col min-w-0">
-    <app-header 
-        [username]="currentUser" 
-        (toggleTheme)="toggleDarkMode()" 
-        (searchChange)="searchText = $event">
+    <app-header
+      [username]="currentUser"
+      (toggleTheme)="toggleDarkMode()"
+      (searchChange)="searchText = $event"
+    >
     </app-header>
 
     <main class="flex-1 overflow-x-hidden overflow-y-auto p-8">
-      
       <div *ngIf="currentView === 'dashboard'">
         <div class="mb-8 flex flex-col md:flex-row justify-between items-end gap-4">
           <div>
             <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Dashboard</h2>
-            <p class="text-gray-500 dark:text-gray-400 mt-1">Overview of your project performance.</p>
+            <p class="text-gray-500 dark:text-gray-400 mt-1">
+              Overview of your project performance.
+            </p>
           </div>
-          <button (click)="openModal()" class="bg-[#0f4c5c] hover:bg-[#0c3b47] text-white px-5 py-2 rounded-xl shadow-lg transition-all flex items-center transform hover:scale-105">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          <button
+            (click)="openModal()"
+            class="bg-[#0f4c5c] hover:bg-[#0c3b47] text-white px-5 py-2 rounded-xl shadow-lg transition-all flex items-center transform hover:scale-105"
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              ></path>
+            </svg>
             New Task
           </button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="relative overflow-hidden bg-gradient-to-r from-[#166070] to-[#0f4c5c] rounded-2xl p-6 shadow-lg text-white">
-                <p class="text-teal-200 text-sm font-medium mb-1">Total Tasks</p>
-                <h3 class="text-3xl font-bold">{{ totalTasks }}</h3>
-            </div>
-            <div class="relative overflow-hidden bg-gradient-to-r from-[#f97316] to-[#ea580c] rounded-2xl p-6 shadow-lg text-white">
-                <p class="text-orange-100 text-sm font-medium mb-1">Active</p>
-                <h3 class="text-3xl font-bold">{{ activeTasksCount }}</h3>
-            </div>
-            <div class="relative overflow-hidden bg-gradient-to-r from-[#0d9488] to-[#115e59] rounded-2xl p-6 shadow-lg text-white">
-                <p class="text-teal-100 text-sm font-medium mb-1">Completion</p>
-                <h3 class="text-3xl font-bold">{{ completionRate }}%</h3>
-            </div>
+          <div
+            class="relative overflow-hidden bg-gradient-to-r from-[#166070] to-[#0f4c5c] rounded-2xl p-6 shadow-lg text-white"
+          >
+            <p class="text-teal-200 text-sm font-medium mb-1">Total Tasks</p>
+            <h3 class="text-3xl font-bold">{{ totalTasks }}</h3>
+          </div>
+          <div
+            class="relative overflow-hidden bg-gradient-to-r from-[#f97316] to-[#ea580c] rounded-2xl p-6 shadow-lg text-white"
+          >
+            <p class="text-orange-100 text-sm font-medium mb-1">Active</p>
+            <h3 class="text-3xl font-bold">{{ activeTasksCount }}</h3>
+          </div>
+          <div
+            class="relative overflow-hidden bg-gradient-to-r from-[#0d9488] to-[#115e59] rounded-2xl p-6 shadow-lg text-white"
+          >
+            <p class="text-teal-100 text-sm font-medium mb-1">Completion</p>
+            <h3 class="text-3xl font-bold">{{ completionRate }}%</h3>
+          </div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+        <div
+          class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
+        >
+          <div
+            class="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center"
+          >
             <h3 class="text-lg font-bold text-gray-800 dark:text-white">All Tasks</h3>
-            <input type="text" [(ngModel)]="searchText" placeholder="Search..." 
-                   class="border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2 focus:ring-[#0f4c5c] outline-none bg-white dark:bg-gray-700 dark:text-white">
+            <input
+              type="text"
+              [(ngModel)]="searchText"
+              placeholder="Search..."
+              class="border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2 focus:ring-[#0f4c5c] outline-none bg-white dark:bg-gray-700 dark:text-white"
+            />
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left">
               <thead class="bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300 text-sm">
                 <tr>
-                    <th class="px-6 py-4">Task</th>
-                    <th class="px-6 py-4">User</th>
-                    <th class="px-6 py-4">Status</th>
-                    <th class="px-6 py-4 text-right">Actions</th>
+                  <th class="px-6 py-4">Task</th>
+                  <th class="px-6 py-4">User</th>
+                  <th class="px-6 py-4">Status</th>
+                  <th class="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                <tr *ngFor="let task of filteredTasks" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                   <td class="px-6 py-4 font-medium text-gray-800 dark:text-gray-200">{{ task.title }}</td>
-                   <td class="px-6 py-4 text-gray-600 dark:text-gray-400">{{ task.username }}</td>
-                   <td class="px-6 py-4">
-                     <span [ngClass]="{
+                <tr
+                  *ngFor="let task of filteredTasks"
+                  class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <td class="px-6 py-4 font-medium text-gray-800 dark:text-gray-200">
+                    {{ task.title }}
+                  </td>
+                  <td class="px-6 py-4 text-gray-600 dark:text-gray-400">{{ task.username }}</td>
+                  <td class="px-6 py-4">
+                    <span
+                      [ngClass]="{
                         'bg-teal-100 text-teal-800': task.status === 'Completed',
                         'bg-orange-100 text-orange-800': task.status === 'In Progress',
-                        'bg-red-100 text-red-800': task.status === 'Pending'
-                      }" class="text-xs font-bold px-3 py-1 rounded-full">
-                        {{ task.status }}
-                      </span>
-                   </td>
-                   <td class="px-6 py-4 text-right">
-                       <button (click)="openEditModal(task)" class="text-blue-500 hover:text-blue-700 mr-3">Edit</button>
-                       <button (click)="deleteTask(task._id)" class="text-red-500 hover:text-red-700">Delete</button>
-                   </td>
+                        'bg-red-100 text-red-800': task.status === 'Pending',
+                      }"
+                      class="text-xs font-bold px-3 py-1 rounded-full"
+                    >
+                      {{ task.status }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-right">
+                    <div *ngIf="task.username === currentUser">
+                      <button
+                        (click)="openEditModal(task)"
+                        class="text-blue-500 hover:text-blue-700 mr-3 font-medium"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        (click)="deleteTask(task._id)"
+                        class="text-red-500 hover:text-red-700 font-medium"
+                      >
+                        Delete
+                      </button>
+                    </div>
+
+                    <div
+                      *ngIf="task.username !== currentUser"
+                      class="text-gray-400 text-xs italic flex justify-end items-center gap-1"
+                    >
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                        ></path>
+                      </svg>
+                      Read Only
+                    </div>
+                  </td>
                 </tr>
                 <tr *ngIf="filteredTasks.length === 0">
-                    <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">No tasks found.</td>
+                  <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                    No tasks found.
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -85,116 +150,198 @@
 
       <div *ngIf="currentView === 'mytasks'">
         <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">My Assigned Tasks</h2>
-        <div class="bg-white dark:bg-gray-800 dark:text-white rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6" *ngIf="myTasks.length === 0">
-             <p class="text-gray-500 dark:text-gray-400">No tasks assigned to "{{ currentUser }}".</p>
+        <div
+          class="bg-white dark:bg-gray-800 dark:text-white rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6"
+          *ngIf="myTasks.length === 0"
+        >
+          <p class="text-gray-500 dark:text-gray-400">No tasks assigned to "{{ currentUser }}".</p>
         </div>
         <div class="grid grid-cols-1 gap-4">
-             <div *ngFor="let task of myTasks" class="bg-white dark:bg-gray-800 dark:text-white p-4 rounded-xl shadow border border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                 <div>
-                     <h3 class="font-bold text-lg text-gray-800 dark:text-white">{{ task.title }}</h3>
-                     <span class="text-sm text-gray-500 dark:text-gray-400">Status: {{ task.status }}</span>
-                 </div>
-                 <button (click)="openEditModal(task)" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100">Update</button>
-             </div>
+          <div
+            *ngFor="let task of myTasks"
+            class="bg-white dark:bg-gray-800 dark:text-white p-4 rounded-xl shadow border border-gray-100 dark:border-gray-700 flex justify-between items-center"
+          >
+            <div>
+              <h3 class="font-bold text-lg text-gray-800 dark:text-white">{{ task.title }}</h3>
+              <span class="text-sm text-gray-500 dark:text-gray-400"
+                >Status: {{ task.status }}</span
+              >
+            </div>
+            <button
+              (click)="openEditModal(task)"
+              class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100"
+            >
+              Update
+            </button>
+          </div>
         </div>
       </div>
 
       <div *ngIf="currentView === 'feeds'">
         <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">System Activity Logs</h2>
-        <div class="bg-white dark:bg-gray-800 dark:text-white rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-            <div *ngFor="let log of activityLogs" class="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center">
-                <span class="w-24 text-xs font-bold text-gray-400">{{ log.time }}</span>
-                <span [ngClass]="{
-                    'text-green-600 dark:text-green-400': log.type === 'success',
-                    'text-red-600 dark:text-red-400': log.type === 'danger',
-                    'text-orange-600 dark:text-orange-400': log.type === 'warning',
-                    'text-blue-600 dark:text-blue-400': log.type === 'info'
-                }" class="flex-1 font-medium">{{ log.message }}</span>
-            </div>
-            <div class="p-4 text-center text-gray-400 text-sm">End of logs</div>
+        <div
+          class="bg-white dark:bg-gray-800 dark:text-white rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
+        >
+          <div
+            *ngFor="let log of activityLogs"
+            class="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center"
+          >
+            <span class="w-24 text-xs font-bold text-gray-400">{{ log.time }}</span>
+            <span
+              [ngClass]="{
+                'text-green-600 dark:text-green-400': log.type === 'success',
+                'text-red-600 dark:text-red-400': log.type === 'danger',
+                'text-orange-600 dark:text-orange-400': log.type === 'warning',
+                'text-blue-600 dark:text-blue-400': log.type === 'info',
+              }"
+              class="flex-1 font-medium"
+              >{{ log.message }}</span
+            >
+          </div>
+          <div class="p-4 text-center text-gray-400 text-sm">End of logs</div>
         </div>
       </div>
 
       <div *ngIf="currentView === 'database'">
         <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">Database Status</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-[#0f4c5c] text-white p-6 rounded-2xl shadow-lg">
-                <h3 class="text-xl font-bold mb-2">MongoDB Connection</h3>
-                <div class="flex items-center space-x-2 mb-4">
-                    <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                    <span class="text-green-200">Connected via Mongoose</span>
-                </div>
-                <p class="text-sm opacity-80">Host: cluster0.mongodb.net</p>
-                <p class="text-sm opacity-80">Port: 27017 (Standard)</p>
+          <div class="bg-[#0f4c5c] text-white p-6 rounded-2xl shadow-lg">
+            <h3 class="text-xl font-bold mb-2">MongoDB Connection</h3>
+            <div class="flex items-center space-x-2 mb-4">
+              <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+              <span class="text-green-200">Connected via Mongoose</span>
             </div>
-            <div class="bg-white dark:bg-gray-800 dark:text-white p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Collection Info</h3>
-                <p class="flex justify-between py-2 border-b dark:border-gray-700"><span>Collection Name:</span> <span class="font-mono">tasks</span></p>
-                <p class="flex justify-between py-2 border-b dark:border-gray-700"><span>Document Count:</span> <span class="font-bold">{{ totalTasks }}</span></p>
-            </div>
+            <p class="text-sm opacity-80">Host: cluster0.mongodb.net</p>
+            <p class="text-sm opacity-80">Port: 27017 (Standard)</p>
+          </div>
+          <div
+            class="bg-white dark:bg-gray-800 dark:text-white p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+          >
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Collection Info</h3>
+            <p class="flex justify-between py-2 border-b dark:border-gray-700">
+              <span>Collection Name:</span> <span class="font-mono">tasks</span>
+            </p>
+            <p class="flex justify-between py-2 border-b dark:border-gray-700">
+              <span>Document Count:</span> <span class="font-bold">{{ totalTasks }}</span>
+            </p>
+          </div>
         </div>
       </div>
 
       <div *ngIf="currentView === 'settings'">
         <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">App Settings</h2>
-        <div class="bg-white dark:bg-gray-800 dark:text-white p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 max-w-2xl">
-            <h3 class="text-xl font-bold mb-6 text-gray-800 dark:text-white">Profile Settings</h3>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Display Name</label>
-                    <input type="text" [value]="currentUser" disabled class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 bg-gray-100 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
-                    <input type="text" value="Super Admin" disabled class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 bg-gray-200 dark:bg-gray-900 text-gray-500 cursor-not-allowed">
-                </div>
-                
-                <div class="flex items-center justify-between pt-4">
-                    <span class="font-medium text-gray-700 dark:text-gray-200">Dark Mode</span>
-                    <button (click)="toggleDarkMode()" class="w-12 h-6 rounded-full relative transition-colors duration-300 focus:outline-none"
-                        [ngClass]="themeService.darkMode() ? 'bg-[#0f4c5c]' : 'bg-gray-300'">
-                        <div class="w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300"
-                             [ngClass]="themeService.darkMode() ? 'translate-x-6' : 'translate-x-0'">
-                        </div>
-                    </button>
-                </div>
+        <div
+          class="bg-white dark:bg-gray-800 dark:text-white p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 max-w-2xl"
+        >
+          <h3 class="text-xl font-bold mb-6 text-gray-800 dark:text-white">Profile Settings</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >Display Name</label
+              >
+              <input
+                type="text"
+                [value]="currentUser"
+                disabled
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 bg-gray-100 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed"
+              />
             </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >Role</label
+              >
+              <input
+                type="text"
+                value="Super Admin"
+                disabled
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 bg-gray-200 dark:bg-gray-900 text-gray-500 cursor-not-allowed"
+              />
+            </div>
+
+            <div class="flex items-center justify-between pt-4">
+              <span class="font-medium text-gray-700 dark:text-gray-200">Dark Mode</span>
+              <button
+                (click)="toggleDarkMode()"
+                class="w-12 h-6 rounded-full relative transition-colors duration-300 focus:outline-none"
+                [ngClass]="themeService.darkMode() ? 'bg-[#0f4c5c]' : 'bg-gray-300'"
+              >
+                <div
+                  class="w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300"
+                  [ngClass]="themeService.darkMode() ? 'translate-x-6' : 'translate-x-0'"
+                ></div>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-
     </main>
 
-    <div *ngIf="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
-      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-96 p-6 transform transition-all scale-100">
+    <div
+      *ngIf="isModalOpen"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm"
+    >
+      <div
+        class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-96 p-6 transform transition-all scale-100"
+      >
         <div class="flex justify-between items-center mb-6">
-          <h3 class="text-xl font-bold text-gray-800 dark:text-white">{{ isEditing ? 'Edit Task' : 'Add New Task' }}</h3>
+          <h3 class="text-xl font-bold text-gray-800 dark:text-white">
+            {{ isEditing ? 'Edit Task' : 'Add New Task' }}
+          </h3>
           <button (click)="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
           </button>
         </div>
         <div class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Task Title</label>
-            <input [(ngModel)]="newTask.title" type="text" placeholder="e.g. Fix Database Bug" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0f4c5c] outline-none bg-white dark:bg-gray-700 dark:text-white" />
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >Task Title</label
+            >
+            <input
+              [(ngModel)]="newTask.title"
+              type="text"
+              placeholder="e.g. Fix Database Bug"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0f4c5c] outline-none bg-white dark:bg-gray-700 dark:text-white"
+            />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Assigned To</label>
-            <input [(ngModel)]="newTask.username" disabled type="text" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-200 dark:bg-gray-900 text-gray-500 cursor-not-allowed" />
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >Assigned To</label
+            >
+            <input
+              [(ngModel)]="newTask.username"
+              disabled
+              type="text"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-200 dark:bg-gray-900 text-gray-500 cursor-not-allowed"
+            />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
-            <select [(ngModel)]="newTask.status" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0f4c5c] outline-none bg-white dark:bg-gray-700 dark:text-white">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >Status</label
+            >
+            <select
+              [(ngModel)]="newTask.status"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0f4c5c] outline-none bg-white dark:bg-gray-700 dark:text-white"
+            >
               <option value="Pending">Pending</option>
               <option value="In Progress">In Progress</option>
               <option value="Completed">Completed</option>
             </select>
           </div>
-          <button (click)="saveTask()" class="w-full bg-[#0f4c5c] hover:bg-[#0c3b47] text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all mt-4">
+          <button
+            (click)="saveTask()"
+            class="w-full bg-[#0f4c5c] hover:bg-[#0c3b47] text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all mt-4"
+          >
             {{ isEditing ? 'Update Task' : 'Create Task' }}
           </button>
         </div>
       </div>
     </div>
-
   </div>
 </div>
