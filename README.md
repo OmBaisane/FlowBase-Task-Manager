@@ -1,47 +1,87 @@
-# 🚀 FlowBase - Real-Time Task Management System
+# FlowBase – Real-Time Task Management Web Application
 
-**FlowBase** is a modern, full-stack web application designed to streamline task tracking and project management. Built using the **MEAN Stack** (MongoDB, Express, Angular, Node.js), it features a real-time dashboard, analytics, and a responsive dark mode interface.
+FlowBase is a full-stack academic web application developed as part of my Final Year BCA coursework (Full Stack Web Development – Semester 6).
 
-> **Project Type:** Final Year BCA Project
-> **Status:** Prototype / Beta
-
----
-
-## ✨ Key Features
-
-- **⚡ Real-Time Synchronization:** Updates (Add/Delete/Edit) appear instantly across all connected clients using **Socket.io**.
-- **📊 Interactive Dashboard:** Visual analytics showing Total Tasks, Active Tasks, and Completion Rates.
-- **🎨 Modern UI/UX:** Fully responsive design built with **Tailwind CSS**, featuring a seamless **Dark Mode** toggle.
-- **🔍 Advanced Search:** Instant filtering of tasks by title or assignee.
-- **🛠️ Full CRUD Operations:** Create, Read, Update, and Delete tasks efficiently.
-- **📱 Responsive:** Works perfectly on Desktops, Tablets, and Mobile devices.
+This project was created to understand how real-time task management systems work, including frontend–backend interaction, real-time updates, and modern UI design. The application was built using the MEAN stack with the help of references and learning resources.
 
 ---
 
-## 🛠️ Tech Stack used
+## Project Details
 
-| Component | Technology | Description |
-| :--- | :--- | :--- |
-| **Frontend** | ![Angular](https://img.shields.io/badge/Angular-DD0031?style=flat-square&logo=angular&logoColor=white) | Angular 17 framework for dynamic UI |
-| **Styling** | ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white) | Utility-first CSS framework |
-| **Backend** | ![NodeJS](https://img.shields.io/badge/Node.js-43853D?style=flat-square&logo=node.js&logoColor=white) | Runtime environment |
-| **API** | ![ExpressJS](https://img.shields.io/badge/Express.js-404D59?style=flat-square) | Web framework for RESTful APIs |
-| **Database** | ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=flat-square&logo=mongodb&logoColor=white) | NoSQL Database |
-| **Real-Time** | ![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=flat-square&logo=socket.io&logoColor=white) | Bidirectional event-based communication |
+- Project Type: Academic / Final Year BCA Project  
+- Semester: 6  
+- Status: Prototype / Learning Project  
+- Development Type: Group-based academic project  
 
 ---
 
-## 🚀 How to Run Locally
+## Features
 
-Follow these steps to set up the project on your local machine.
+- Real-time task updates using Socket.IO  
+- Create, update, and delete tasks (CRUD operations)  
+- Responsive and modern UI  
+- Dark mode user interface  
+- Task search and filtering  
+- Dashboard view for task overview  
 
-### 1. Prerequisites
-Make sure you have the following installed:
-- [Node.js](https://nodejs.org/) (v16 or higher)
-- [MongoDB](https://www.mongodb.com/try/download/community) (Local or Atlas URL)
-- [Angular CLI](https://angular.io/cli) (`npm install -g @angular/cli`)
+---
 
-### 2. Clone the Repository
-```bash
-git clone [https://github.com/YOUR_USERNAME/FlowBase-Task-Manager.git](https://github.com/YOUR_USERNAME/FlowBase-Task-Manager.git)
+## Tech Stack
+
+### Frontend
+- Angular  
+- TypeScript  
+- HTML  
+- CSS  
+- Tailwind CSS  
+
+### Backend
+- Node.js  
+- Express.js  
+
+### Database
+- MongoDB  
+
+### Real-Time Communication
+- Socket.IO  
+
+---
+
+## Learning Focus
+
+This project helped me gain practical exposure to:
+
+- Angular project structure and components  
+- Basic TypeScript usage in frontend applications  
+- Real-time communication using Socket.IO  
+- Frontend–backend data flow  
+- Building responsive UI using Tailwind CSS  
+- Understanding how full-stack web applications are structured  
+
+---
+
+## How to Run Locally
+
+### Prerequisites
+- Node.js (v16 or above)  
+- MongoDB (Local or Atlas)  
+- Angular CLI  
+
+### Steps
+1. Clone the repository
+git clone https://github.com/OmBaisane/FlowBase-Task-Manager.git
+Copy code
+
+2. Navigate to the project folder
 cd FlowBase-Task-Manager
+Copy code
+
+3. Install dependencies for client and server  
+4. Start backend and frontend servers  
+5. Open the application in the browser  
+
+---
+
+## Disclaimer
+
+This is an academic learning project developed for educational purposes. The project was built using references and learning resources to understand real-time full-stack application development.
