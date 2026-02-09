@@ -1,0 +1,29 @@
+/* Animation Keyframes */
+.animate-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0f4c5c;
+  border-radius: 10px;
+}
+
+/* Dark Mode Scrollbar */
+.dark ::-webkit-scrollbar-thumb {
+    background: #14b8a6;
+}

@@ -1,7 +1,11 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router'; 
+import { HttpErrorResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs'; 
+
+// Components & Services
 import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { TaskService, Task } from './services/task.service';
@@ -15,12 +19,16 @@ import { AuthService } from './services/auth.service';
   templateUrl: './app.component.html',
   styles: []
 })
-export class AppComponent implements OnInit {
-  // --- AUTH STATE ---
+export class AppComponent implements OnInit, OnDestroy {
+  // --- AUTHENTICATION & SUBSCRIPTIONS ---
+  private authSub: Subscription | undefined;
   isLoggedIn = false;
   currentUser: string = '';
 
-  // --- APP STATE ---
+  // --- RESPONSIVE STATE ---
+  isMobileMenuOpen = false;
+
+  // --- APPLICATION STATE ---
   title = 'FlowBase';
   tasks: Task[] = [];
   searchText: string = '';
@@ -35,11 +43,9 @@ export class AppComponent implements OnInit {
   currentTaskId = '';
   newTask: Task = { title: '', username: '', status: 'Pending' };
 
-  activityLogs = [
-    { time: '10:30 AM', message: 'System Update Completed', type: 'info' },
-    { time: '11:15 AM', message: 'New Task Added', type: 'success' },
-    { time: '12:00 PM', message: 'Server Load Peak (98%)', type: 'warning' },
-    { time: '01:45 PM', message: 'User deleted a task', type: 'danger' }
+  // --- ACTIVITY LOGS ---
+  activityLogs: any[] = [
+    { time: 'System', message: 'FlowBase System Initialized', type: 'info' }
   ];
 
   constructor(
@@ -51,39 +57,75 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Real-Time Auth Listener (Ye hai Jadu!) 🪄
-    this.authService.currentUser$.subscribe(user => {
+    // Auth Listener
+    this.authSub = this.authService.currentUser$.subscribe(user => {
       if (user) {
         this.isLoggedIn = true;
         this.currentUser = user;
         this.fetchTasks();
-        this.router.navigate(['/']); // Dashboard par bhejo
+        if (this.router.url === '/login') this.router.navigate(['/']);
       } else {
         this.isLoggedIn = false;
         this.currentUser = '';
-        // Agar user login nahi hai aur register page par nahi hai, to login par bhejo
-        if(this.router.url !== '/register') {
-           this.router.navigate(['/login']);
-        }
+        if (this.router.url !== '/register') this.router.navigate(['/login']);
       }
     });
 
+    // Real-time Socket Listener
     this.taskService.onTaskUpdate(() => {
-      if (this.isLoggedIn) this.fetchTasks();
+      if (this.isLoggedIn) {
+        this.fetchTasks();
+      }
     });
   }
 
-  onMenuChange(menu: string) { this.currentView = menu; this.searchText = ''; }
+  ngOnDestroy() {
+    if (this.authSub) this.authSub.unsubscribe();
+  }
+
+  // --- HELPER FUNCTIONS ---
+  
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  addLog(msg: string, type: string = 'success') {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    this.activityLogs.unshift({ time: timeStr, message: msg, type: type });
+    if (this.activityLogs.length > 8) this.activityLogs.pop(); 
+  }
+
+  onMenuChange(menu: string) { 
+    this.currentView = menu; 
+    this.searchText = ''; 
+    this.isMobileMenuOpen = false; // Auto-close menu on mobile
+    this.cd.detectChanges();
+  }
+
   toggleDarkMode() { this.themeService.toggleTheme(); }
+
+  openNotifications() {
+    this.currentView = 'feeds';
+    this.addLog("User checked notifications", "info");
+  }
   
   logout() {
-    this.authService.logout(); // Ye automatically listener trigger karega
+    if(confirm("Are you sure you want to log out?")) {
+      this.authService.logout();
+    }
   }
+
+  // --- TASK MANAGEMENT LOGIC ---
 
   get filteredTasks() {
     if (!this.searchText) return this.tasks;
     const s = this.searchText.toLowerCase();
-    return this.tasks.filter(t => (t.title?.toLowerCase().includes(s) || t.username?.toLowerCase().includes(s)));
+    return this.tasks.filter(t => 
+      t.title?.toLowerCase().includes(s) || 
+      t.username?.toLowerCase().includes(s) ||
+      t.status?.toLowerCase().includes(s)
+    );
   }
 
   get myTasks() { 
@@ -92,18 +134,24 @@ export class AppComponent implements OnInit {
 
   calculateStats() {
     this.totalTasks = this.tasks.length;
-    this.activeTasksCount = this.tasks.filter(t => t.status === 'Pending' || t.status === 'In Progress').length;
-    const completed = this.tasks.filter(t => t.status === 'Completed').length;
+    const active = this.tasks.filter(t => t.status !== 'Completed');
+    this.activeTasksCount = active.length;
+    const completed = this.totalTasks - active.length;
     this.completionRate = this.totalTasks > 0 ? Math.round((completed / this.totalTasks) * 100) : 0;
   }
 
   fetchTasks() {
     this.taskService.getTasks().subscribe({
-      next: (data) => { this.tasks = data; this.calculateStats(); this.cd.detectChanges(); },
-      error: (err) => console.error('Error Fetching Tasks:', err)
+      next: (data) => { 
+        this.tasks = data; 
+        this.calculateStats(); 
+        this.cd.detectChanges(); 
+      },
+      error: (err) => console.error('API Fetch Error:', err)
     });
   }
   
+  // Modal Handlers
   openModal() { 
     this.isModalOpen = true; 
     this.isEditing = false; 
@@ -114,37 +162,76 @@ export class AppComponent implements OnInit {
     this.isModalOpen = true; 
     this.isEditing = true; 
     this.currentTaskId = task._id; 
+    // Clone object to avoid reference issues
     this.newTask = { ...task }; 
   }
   
-  closeModal() { this.isModalOpen = false; this.isEditing = false; }
+  closeModal() { 
+    this.isModalOpen = false; 
+    this.isEditing = false; 
+  }
 
+  // CRUD Operations
   saveTask() {
-    if (!this.newTask.title) { alert('Please enter a task title!'); return; }
-    this.newTask.username = this.currentUser;
+    if (!this.newTask.title.trim()) { 
+      alert('Task title is required.'); 
+      return; 
+    }
+
+    // Sanitize Payload: Only send necessary fields to prevent 400 Bad Request
+    const cleanPayload: Task = {
+      title: this.newTask.title,
+      username: this.currentUser,
+      status: this.newTask.status
+    };
 
     if (this.isEditing) {
-      this.taskService.updateTask(this.currentTaskId, this.newTask).subscribe({
+      this.taskService.updateTask(this.currentTaskId, cleanPayload).subscribe({
         next: (res) => {
-           const i = this.tasks.findIndex(t => t._id === this.currentTaskId);
-           if(i !== -1) this.tasks[i] = res;
-           this.calculateStats(); this.closeModal(); alert("Updated! ✏️"); this.cd.detectChanges();
+          this.addLog(`Updated task: "${res.title}"`, 'info');
+          this.fetchTasks(); 
+          this.closeModal();
+        },
+        error: (err: HttpErrorResponse) => {
+          console.error("Update Error:", err);
+          alert(`Update Failed: ${err.error.message || err.message}`);
         }
       });
     } else {
-      this.taskService.createTask(this.newTask).subscribe({
-        next: (res) => { this.tasks.unshift(res); this.calculateStats(); this.closeModal(); alert("Added! ✅"); this.cd.detectChanges(); }
+      this.taskService.createTask(cleanPayload).subscribe({
+        next: (res) => {
+          this.addLog(`Created new task`, 'success');
+          this.tasks.unshift(res); 
+          this.calculateStats(); 
+          this.closeModal();
+        },
+        error: (err: HttpErrorResponse) => {
+          console.error("Creation Error:", err);
+          alert(`Creation Failed: ${err.error.message || err.message}`);
+        }
       });
     }
   }
 
   deleteTask(id: any) {
-    if(confirm("Delete this task?")) {
-      const backup = [...this.tasks];
-      this.tasks = this.tasks.filter(t => t._id !== id); this.calculateStats(); this.cd.detectChanges();
-      this.taskService.deleteTask(id).subscribe({ error: () => { alert("Error!"); this.tasks = backup; this.calculateStats(); } });
+    if(confirm("Permanently delete this task?")) {
+      // Optimistic UI update
+      const previousTasks = [...this.tasks];
+      this.tasks = this.tasks.filter(t => t._id !== id); 
+      this.calculateStats();
+
+      this.taskService.deleteTask(id).subscribe({
+        next: () => this.addLog(`Deleted task`, 'danger'),
+        error: () => { 
+          alert("Server Error. Reverting changes."); 
+          this.tasks = previousTasks; // Rollback
+          this.calculateStats();
+        }
+      });
     }
   }
 
-  updateProfile() { alert("Profile Updated Successfully! (Demo Only)"); }
+  updateProfile() { 
+    alert("System Version: 1.0.0 (Stable)"); 
+  }
 }
