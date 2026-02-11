@@ -15,7 +15,6 @@ export interface Task {
   providedIn: 'root'
 })
 export class TaskService {
-  // Base URL ko ek hi jagah rakhein taaki change karna asaan ho
   private readonly BASE_URL = 'http://localhost:5000';
   private readonly API_URL = `${this.BASE_URL}/tasks`;
   private socket: Socket;
@@ -44,7 +43,6 @@ export class TaskService {
   // --- REAL TIME LISTENER ---
   onTaskUpdate(callback: () => void) {
     this.socket.on('task-updated', () => {
-      // Viva Tip: Socket server se signal aate hi frontend automatically refresh hota hai
       callback(); 
     });
   }
