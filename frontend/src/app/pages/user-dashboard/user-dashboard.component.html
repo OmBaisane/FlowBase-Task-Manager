@@ -1,11 +1,66 @@
-<app-header></app-header>
+<div class="min-h-screen flex flex-col bg-slate-50 dark:bg-[#080d18]">
+  <app-header></app-header>
 
-<div style="display: flex">
-  <app-sidebar></app-sidebar>
+  <div class="flex flex-1 overflow-hidden">
+    <app-sidebar></app-sidebar>
 
-  <div style="padding: 20px; width: 100%">
-    <h2>User Dashboard</h2>
+    <main class="flex-1 overflow-y-auto">
+      <div class="max-w-6xl mx-auto px-6 py-6">
 
-    <app-task-list></app-task-list>
+        <!-- Page title -->
+        <div class="flex items-start justify-between mb-6">
+          <div>
+            <h1 class="text-xl font-extrabold text-slate-800 dark:text-white tracking-tight">My Dashboard</h1>
+            <p class="text-sm text-slate-400 dark:text-slate-500 mt-0.5">
+              Welcome back{{ user?.name ? ', ' + user.name : '' }} — your tasks update in real-time
+            </p>
+          </div>
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold
+                      bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
+            Live sync
+          </div>
+        </div>
+
+        <!-- Stats + chart row -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-5 mb-5">
+
+          <!-- Mini stat cards -->
+          <div class="lg:col-span-3 grid grid-cols-3 gap-4">
+            <div class="bg-white dark:bg-slate-800/70 rounded-2xl p-5 border border-slate-200/60 dark:border-slate-700/40 shadow-sm">
+              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Total</p>
+              <p class="text-3xl font-extrabold text-slate-800 dark:text-white tabular-nums">{{ stats.total }}</p>
+              <p class="text-xs text-slate-400 mt-1">assigned tasks</p>
+            </div>
+            <div class="bg-white dark:bg-slate-800/70 rounded-2xl p-5 border border-blue-100 dark:border-blue-500/20 shadow-sm">
+              <p class="text-[11px] font-bold text-blue-400 uppercase tracking-widest mb-2">Active</p>
+              <p class="text-3xl font-extrabold text-blue-600 dark:text-blue-400 tabular-nums">{{ stats.inProgress }}</p>
+              <p class="text-xs text-blue-400/70 mt-1">in progress</p>
+            </div>
+            <div class="bg-white dark:bg-slate-800/70 rounded-2xl p-5 border border-emerald-100 dark:border-emerald-500/20 shadow-sm">
+              <p class="text-[11px] font-bold text-emerald-500 uppercase tracking-widest mb-2">Done</p>
+              <p class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums">{{ stats.completed }}</p>
+              <p class="text-xs text-emerald-500/70 mt-1">completed</p>
+            </div>
+          </div>
+
+          <!-- Doughnut chart -->
+          <div class="bg-white dark:bg-slate-800/70 rounded-2xl border border-slate-200/60 dark:border-slate-700/40 shadow-sm p-5">
+            <p class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Distribution</p>
+            <app-doughnut-chart
+              [labels]="chartLabels"
+              [data]="chartData"
+              [colors]="chartColors"
+              centerLabel="Tasks"
+              [centerValue]="stats.total">
+            </app-doughnut-chart>
+          </div>
+        </div>
+
+        <!-- Task list -->
+        <app-task-list [refresh]="refreshTasks"></app-task-list>
+
+      </div>
+    </main>
   </div>
 </div>

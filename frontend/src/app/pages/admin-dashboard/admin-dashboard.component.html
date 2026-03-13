@@ -1,21 +1,81 @@
-<div class="cards">
-  <div class="card">
-    <h3>Total Tasks</h3>
-    <p>--</p>
-  </div>
+<div class="min-h-screen flex flex-col bg-slate-50 dark:bg-[#080d18]">
+  <app-header></app-header>
 
-  <div class="card">
-    <h3>Todo</h3>
-    <p>--</p>
-  </div>
+  <div class="flex flex-1 overflow-hidden">
+    <app-sidebar></app-sidebar>
 
-  <div class="card">
-    <h3>In Progress</h3>
-    <p>--</p>
-  </div>
+    <main class="flex-1 overflow-y-auto">
+      <div class="max-w-7xl mx-auto px-6 py-6">
 
-  <div class="card">
-    <h3>Done</h3>
-    <p>--</p>
+        <!-- Page title -->
+        <div class="flex items-start justify-between mb-6">
+          <div>
+            <h1 class="text-xl font-extrabold text-slate-800 dark:text-white tracking-tight">Admin Dashboard</h1>
+            <p class="text-sm text-slate-400 dark:text-slate-500 mt-0.5">Full task control &amp; real-time team visibility</p>
+          </div>
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold
+                      bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
+            Live sync
+          </div>
+        </div>
+
+        <!-- Analytics + Form row -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-5">
+
+          <!-- Chart card -->
+          <div class="bg-white dark:bg-slate-800/70 rounded-2xl border border-slate-200/60 dark:border-slate-700/40 shadow-sm p-6">
+            <div class="flex items-center gap-2.5 mb-5">
+              <div class="w-7 h-7 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center">
+                <svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
+                </svg>
+              </div>
+              <h3 class="text-sm font-bold text-slate-800 dark:text-white">Task Analytics</h3>
+            </div>
+
+            <app-doughnut-chart
+              [labels]="chartLabels"
+              [data]="chartData"
+              [colors]="chartColors"
+              centerLabel="Tasks"
+              [centerValue]="stats.total">
+            </app-doughnut-chart>
+
+            <!-- Legend -->
+            <div class="mt-5 space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-400 inline-block"></span>Todo
+                </span>
+                <span class="font-bold tabular-nums text-slate-700 dark:text-slate-300">{{ stats.todo }}</span>
+              </div>
+              <div class="flex items-center justify-between text-xs">
+                <span class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                  <span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>In Progress
+                </span>
+                <span class="font-bold tabular-nums text-slate-700 dark:text-slate-300">{{ stats.inProgress }}</span>
+              </div>
+              <div class="flex items-center justify-between text-xs">
+                <span class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>Completed
+                </span>
+                <span class="font-bold tabular-nums text-slate-700 dark:text-slate-300">{{ stats.completed }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Task form -->
+          <div class="xl:col-span-2">
+            <app-task-form (taskCreated)="onTaskCreated()"></app-task-form>
+          </div>
+        </div>
+
+        <!-- Task list -->
+        <app-task-list [refresh]="refreshTasks"></app-task-list>
+
+      </div>
+    </main>
   </div>
 </div>

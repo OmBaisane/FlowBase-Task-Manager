@@ -1,28 +1,45 @@
 import { Routes } from '@angular/router';
-
-import { LoginComponent } from './pages/login/login.component';
-import { RegisterComponent } from './pages/register/register.component';
-import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
-import { UserDashboardComponent } from './pages/user-dashboard/user-dashboard.component';
+import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
-    path: '',
-    component: LoginComponent,
+    path: 'login',
+    loadComponent: () =>
+      import('./pages/login/login.component').then((m) => m.LoginComponent),
   },
-
   {
     path: 'register',
-    component: RegisterComponent,
+    loadComponent: () =>
+      import('./pages/register/register.component').then((m) => m.RegisterComponent),
   },
-
   {
-    path: 'admin-dashboard',
-    component: AdminDashboardComponent,
+    path: 'dashboard',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/user-dashboard/user-dashboard.component').then(
+        (m) => m.UserDashboardComponent
+      ),
   },
-
   {
-    path: 'user-dashboard',
-    component: UserDashboardComponent,
+    path: 'tasks',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/user-dashboard/user-dashboard.component').then(
+        (m) => m.UserDashboardComponent
+      ),
   },
+  {
+    path: 'admin',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./pages/admin-dashboard/admin-dashboard.component').then(
+        (m) => m.AdminDashboardComponent
+      ),
+  },
+  // Legacy routes (redirect to new)
+  { path: 'admin-dashboard', redirectTo: 'admin', pathMatch: 'full' },
+  { path: 'user-dashboard', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '**', redirectTo: 'login' },
 ];
