@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core'; // <-- IMPORTS ADD KIYE
 import { CommonModule } from '@angular/common';
-import { Subscription } from 'rxjs'
+import { Subscription } from 'rxjs';
 import { HeaderComponent } from '../../components/header/header.component';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { TaskListComponent } from '../../components/task-list/task-list.component';
@@ -12,7 +12,13 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, SidebarComponent, TaskListComponent, DoughnutChartComponent],
+  imports: [
+    CommonModule,
+    HeaderComponent,
+    SidebarComponent,
+    TaskListComponent,
+    DoughnutChartComponent,
+  ],
   templateUrl: './user-dashboard.component.html',
 })
 export class UserDashboardComponent implements OnInit, OnDestroy {
@@ -29,18 +35,16 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     private socketService: SocketService,
     private taskService: TaskService,
     private authService: AuthService,
+    private cdr: ChangeDetectorRef, // <-- INJECT KIYA
+    private ngZone: NgZone, // <-- INJECT KIYA
   ) {}
 
   ngOnInit(): void {
     this.user = this.authService.getUser();
 
-    // Start socket — idempotent singleton, safe to call multiple times.
     this.socketService.connect();
-
-    // Fetch stats immediately on load — do not wait for a UI interaction.
     this.loadStats();
 
-    // Keep chart in sync with real-time events.
     this.subs.push(
       this.socketService.taskCreated$.subscribe(() => this.loadStats()),
       this.socketService.taskUpdated$.subscribe(() => this.loadStats()),
@@ -49,14 +53,19 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Unsubscribe our own listeners only.
-    // Do NOT disconnect the socket — it is a singleton service.
     this.subs.forEach((s) => s.unsubscribe());
   }
 
   loadStats(): void {
     this.taskService.getStats().subscribe({
-      next: (s) => (this.stats = s),
+      next: (s) => {
+        // Zone aur CDR lagaya taaki chart hamesha real-time update ho
+        this.ngZone.run(() => {
+          this.stats = s;
+          this.cdr.markForCheck();
+          this.cdr.detectChanges();
+        });
+      },
     });
   }
 
@@ -65,6 +74,9 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   }
 
   onTaskCreated(): void {
-    this.refreshTasks++;
+    this.ngZone.run(() => {
+      this.refreshTasks++;
+      this.cdr.detectChanges();
+    });
   }
 }
