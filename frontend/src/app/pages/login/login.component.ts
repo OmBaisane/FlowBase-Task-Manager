@@ -16,23 +16,25 @@ export class LoginComponent {
   error = '';
   loading = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+  ) {}
 
   login() {
-    this.error = '';
     this.loading = true;
-    this.authService.login(this.email, this.password).subscribe({
-      next: (res: any) => {
+
+    const safeEmail = this.email.trim();
+    const safePassword = this.password.trim();
+
+    this.authService.login(safeEmail, safePassword).subscribe({
+      next: (res) => {
         this.loading = false;
-        if (res.user.role === 'admin') {
-          this.router.navigate(['/admin']);
-        } else {
-          this.router.navigate(['/dashboard']);
-        }
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.loading = false;
-        this.error = err.error?.message || 'Login failed. Please try again.';
+        this.error = err.error.message || 'Invalid credentials';
       },
     });
   }

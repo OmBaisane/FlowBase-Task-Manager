@@ -47,3 +47,33 @@ exports.deleteUser = async (req, res) => {
     });
   }
 };
+
+// UPDATE USER ROLE (Change between Admin/User)
+
+exports.updateUserRole = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { role } = req.body;
+
+    // Safety check: admin can't remove self
+    if (req.user._id.toString() === userId && role !== "admin") {
+      return res
+        .status(400)
+        .json({ message: "You cannot remove your own admin rights!" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { role },
+      { new: true },
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "Role updated successfully", user });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

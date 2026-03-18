@@ -155,9 +155,6 @@ export class TaskListComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  // ... (Baaki saare view helpers same rahenge getPriorityColor, getStatusColor etc.)
-  // Unhe maine chheda nahi hai, wo ekdum sahi the.
-
   getPriorityColor(priority: string): string {
     const map: Record<string, string> = {
       high: 'text-red-600 bg-red-50 dark:bg-red-500/10 dark:text-red-400 border border-red-200 dark:border-red-500/20',
@@ -225,5 +222,32 @@ export class TaskListComponent implements OnInit, OnChanges, OnDestroy {
       label: `Due ${due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
       cls: 'text-slate-500 bg-slate-100 dark:bg-slate-700/60 dark:text-slate-400 border border-slate-200 dark:border-slate-600/40',
     };
+  }
+
+  exportToCSV(): void {
+    if (this.tasks.length === 0) return alert('No tasks to export!');
+
+    const headers = ['Title', 'Description', 'Status', 'Priority', 'Assigned To'];
+    const csvRows = [headers.join(',')];
+
+    this.tasks.forEach((t) => {
+      // Commas ko handle karne ke liye strings ko quotes mein wrap karna zaroori hai
+      const row = [
+        `"${t.title.replace(/"/g, '""')}"`,
+        `"${(t.description || '').replace(/"/g, '""')}"`,
+        `"${t.status}"`,
+        `"${t.priority}"`,
+        `"${t.assignedTo?.name || 'Unassigned'}"`,
+      ];
+      csvRows.push(row.join(','));
+    });
+
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `FlowBase_Tasks_${new Date().toLocaleDateString()}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 }

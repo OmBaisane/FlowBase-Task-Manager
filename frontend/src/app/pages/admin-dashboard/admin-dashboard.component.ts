@@ -8,6 +8,7 @@ import { TaskListComponent } from '../../components/task-list/task-list.componen
 import { DoughnutChartComponent } from '../../components/chart/doughnut-chart.component';
 import { SocketService } from '../../services/socket.service';
 import { TaskService } from '../../services/task.service';
+import { UserManagementComponent } from '../../components/user-management/user-management.component';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -19,6 +20,7 @@ import { TaskService } from '../../services/task.service';
     TaskFormComponent,
     TaskListComponent,
     DoughnutChartComponent,
+    UserManagementComponent,
   ],
   templateUrl: './admin-dashboard.component.html',
 })

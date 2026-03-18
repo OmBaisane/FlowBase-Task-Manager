@@ -18,23 +18,29 @@ export class RegisterComponent {
   error = '';
   loading = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+  ) {}
 
   register() {
-    this.error = '';
     this.loading = true;
-    this.authService.register({ name: this.name, email: this.email, password: this.password, role: this.role }).subscribe({
-      next: (res: any) => {
+
+    const userData = {
+      name: this.name.trim(),
+      email: this.email.trim(),
+      password: this.password.trim(),
+    };
+
+    this.authService.register(userData).subscribe({
+      next: (res) => {
         this.loading = false;
-        if (res.user?.role === 'admin') {
-          this.router.navigate(['/admin']);
-        } else {
-          this.router.navigate(['/dashboard']);
-        }
+        alert('Account created successfully! Please log in.');
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         this.loading = false;
-        this.error = err.error?.message || 'Registration failed.';
+        this.error = err.error.message || 'Registration failed';
       },
     });
   }

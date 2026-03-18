@@ -14,4 +14,8 @@ export class UserService {
   deleteUser(id: string) {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
+
+  updateRole(id: string, role: string) {
+    return this.http.put<any>(`${this.apiUrl}/${id}/role`, { role });
+  }
 }
