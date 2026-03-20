@@ -6,8 +6,7 @@ export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
     path: 'login',
-    loadComponent: () =>
-      import('./pages/login/login.component').then((m) => m.LoginComponent),
+    loadComponent: () => import('./pages/login/login.component').then((m) => m.LoginComponent),
   },
   {
     path: 'register',
@@ -19,26 +18,31 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/user-dashboard/user-dashboard.component').then(
-        (m) => m.UserDashboardComponent
+        (m) => m.UserDashboardComponent,
       ),
   },
   {
-    path: 'tasks',
+    path: 'profile',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./pages/user-dashboard/user-dashboard.component').then(
-        (m) => m.UserDashboardComponent
-      ),
+      import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
   },
   {
     path: 'admin',
     canActivate: [authGuard, adminGuard],
     loadComponent: () =>
       import('./pages/admin-dashboard/admin-dashboard.component').then(
-        (m) => m.AdminDashboardComponent
+        (m) => m.AdminDashboardComponent,
       ),
   },
-  // Legacy routes (redirect to new)
+  {
+    path: 'admin/users',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./components/user-management/user-management.component').then(
+        (m) => m.UserManagementComponent,
+      ),
+  },
   { path: 'admin-dashboard', redirectTo: 'admin', pathMatch: 'full' },
   { path: 'user-dashboard', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core'; // <-- IMPORTS ADD KIYE
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HeaderComponent } from '../../components/header/header.component';
@@ -24,6 +24,7 @@ import { AuthService } from '../../services/auth.service';
 export class UserDashboardComponent implements OnInit, OnDestroy {
   refreshTasks = 0;
   user: any = null;
+  isMobileMenuOpen = false;
 
   stats = { total: 0, todo: 0, inProgress: 0, completed: 0 };
   chartLabels = ['Todo', 'In Progress', 'Completed'];
@@ -35,8 +36,8 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     private socketService: SocketService,
     private taskService: TaskService,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef, // <-- INJECT KIYA
-    private ngZone: NgZone, // <-- INJECT KIYA
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
   ) {}
 
   ngOnInit(): void {
@@ -59,7 +60,6 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   loadStats(): void {
     this.taskService.getStats().subscribe({
       next: (s) => {
-        // Zone aur CDR lagaya taaki chart hamesha real-time update ho
         this.ngZone.run(() => {
           this.stats = s;
           this.cdr.markForCheck();

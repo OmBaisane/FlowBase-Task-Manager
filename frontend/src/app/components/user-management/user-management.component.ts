@@ -2,14 +2,17 @@ import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
+import { HeaderComponent } from '../header/header.component';
+import { SidebarComponent } from '../sidebar/sidebar.component';
 
 @Component({
   selector: 'app-user-management',
-  standalone: true, // <-- Yeh hona zaroori hai
-  imports: [CommonModule, FormsModule],
-  templateUrl: './user-management.component.html', // <-- HTML file ka link
+  standalone: true,
+  imports: [CommonModule, FormsModule, HeaderComponent, SidebarComponent],
+  templateUrl: './user-management.component.html',
 })
 export class UserManagementComponent implements OnInit {
+  isMobileMenuOpen = false;
   users: any[] = [];
 
   constructor(
@@ -27,7 +30,7 @@ export class UserManagementComponent implements OnInit {
       next: (res) => {
         this.ngZone.run(() => {
           this.users = res;
-          this.cdr.detectChanges(); // Turant refresh
+          this.cdr.detectChanges(); // immediately refresh after loading users
         });
       },
       error: (err) => console.error(err),
@@ -54,7 +57,7 @@ export class UserManagementComponent implements OnInit {
         next: () => {
           this.ngZone.run(() => {
             this.users = this.users.filter((u) => u._id !== id);
-            this.cdr.detectChanges(); // Turant user ko gayab karega
+            this.cdr.detectChanges(); // immediately refresh after deletion
           });
         },
         error: () => alert('Failed to delete user on server.'),

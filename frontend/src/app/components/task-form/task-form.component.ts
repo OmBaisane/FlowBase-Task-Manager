@@ -15,6 +15,7 @@ export class TaskFormComponent implements OnInit {
   @Output() taskCreated = new EventEmitter<void>();
 
   title = '';
+  projectName = '';
   description = '';
   priority = 'medium';
   assignedTo = '';
@@ -52,6 +53,7 @@ export class TaskFormComponent implements OnInit {
 
     const data: any = {
       title: this.title.trim(),
+      projectName: this.projectName.trim() || 'General',
       description: this.description.trim(),
       priority: this.priority,
       dueDate: this.dueDate || null,

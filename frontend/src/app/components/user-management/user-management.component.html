@@ -1,56 +1,135 @@
-<div
-  class="bg-white dark:bg-slate-800/70 rounded-2xl border border-slate-200/60 dark:border-slate-700/40 shadow-sm overflow-hidden mt-6 mb-6"
->
-  <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-700/30">
-    <h3 class="text-sm font-bold text-slate-800 dark:text-white tracking-tight">Team Members</h3>
-  </div>
+<div class="min-h-screen flex flex-col bg-slate-50 dark:bg-[#080d18]">
+  <app-header (toggleSidebar)="isMobileMenuOpen = !isMobileMenuOpen"></app-header>
 
-  <div class="overflow-x-auto">
-    <table class="w-full text-left text-sm text-slate-500 dark:text-slate-400">
-      <thead
-        class="text-xs text-slate-700 uppercase bg-slate-50 dark:bg-slate-700/50 dark:text-slate-400"
-      >
-        <tr>
-          <th scope="col" class="px-6 py-3">Name</th>
-          <th scope="col" class="px-6 py-3">Email</th>
-          <th scope="col" class="px-6 py-3">Role</th>
-          <th scope="col" class="px-6 py-3 text-right">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let user of users"
-          class="border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+  <div class="flex flex-1 overflow-hidden relative">
+    <app-sidebar
+      [isOpen]="isMobileMenuOpen"
+      (closeSidebar)="isMobileMenuOpen = false"
+    ></app-sidebar>
+
+    <div
+      *ngIf="isMobileMenuOpen"
+      (click)="isMobileMenuOpen = false"
+      class="fixed inset-0 bg-black/50 z-30 lg:hidden backdrop-blur-sm transition-opacity"
+    ></div>
+
+    <main class="flex-1 overflow-y-auto w-full">
+      <div class="max-w-7xl mx-auto px-6 py-6">
+        <div class="flex items-start justify-between mb-6">
+          <div>
+            <h1 class="text-xl font-extrabold text-slate-800 dark:text-white tracking-tight">
+              Team Access
+            </h1>
+            <p class="text-sm text-slate-400 dark:text-slate-500 mt-0.5">
+              Manage user roles and system access
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="bg-white dark:bg-slate-800/70 rounded-2xl border border-slate-200/60 dark:border-slate-700/40 shadow-sm overflow-hidden"
         >
-          <td class="px-6 py-4 font-medium text-slate-900 dark:text-white flex items-center gap-3">
-            <div
-              class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs"
-            >
-              {{ user.name.charAt(0).toUpperCase() }}
-            </div>
-            {{ user.name }}
-          </td>
-          <td class="px-6 py-4">{{ user.email }}</td>
-          <td class="px-6 py-4">
-            <select
-              [ngModel]="user.role"
-              (ngModelChange)="changeRole(user._id, $event)"
-              class="bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1.5"
-            >
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-            </select>
-          </td>
-          <td class="px-6 py-4 text-right">
-            <button
-              (click)="deleteUser(user._id)"
-              class="text-red-500 hover:text-red-700 font-medium text-xs bg-red-50 dark:bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors"
-            >
-              Remove
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr
+                  class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200/60 dark:border-slate-700/40"
+                >
+                  <th
+                    class="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest"
+                  >
+                    User Details
+                  </th>
+                  <th
+                    class="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest"
+                  >
+                    Current Role
+                  </th>
+                  <th
+                    class="px-6 py-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest text-right"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-700/30">
+                <tr
+                  *ngFor="let user of users"
+                  class="hover:bg-slate-50/70 dark:hover:bg-white/5 transition-colors duration-150"
+                >
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="w-8 h-8 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-sm shrink-0"
+                      >
+                        {{ user.name.charAt(0).toUpperCase() }}
+                      </div>
+                      <div>
+                        <p class="text-sm font-semibold text-slate-800 dark:text-white">
+                          {{ user.name }}
+                        </p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">{{ user.email }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span
+                      class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide capitalize"
+                      [ngClass]="
+                        user.role === 'admin'
+                          ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400'
+                          : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300'
+                      "
+                    >
+                      {{ user.role }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-right">
+                    <div class="flex items-center justify-end gap-2">
+                      <button
+                        *ngIf="user.role !== 'admin'"
+                        (click)="changeRole(user._id, 'admin')"
+                        class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors"
+                      >
+                        Make Admin
+                      </button>
+                      <button
+                        *ngIf="user.role === 'admin'"
+                        (click)="changeRole(user._id, 'user')"
+                        class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                      >
+                        Make User
+                      </button>
+                      <button
+                        (click)="deleteUser(user._id)"
+                        class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors ml-2"
+                        title="Delete User"
+                      >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="users.length === 0">
+                  <td
+                    colspan="3"
+                    class="px-6 py-8 text-center text-sm text-slate-500 dark:text-slate-400"
+                  >
+                    No users found in the system.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 </div>

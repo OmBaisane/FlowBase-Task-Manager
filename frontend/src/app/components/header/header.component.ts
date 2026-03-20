@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 
@@ -9,6 +9,9 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './header.component.html',
 })
 export class HeaderComponent implements OnInit {
+  // Sent signal to Dashboard
+  @Output() toggleSidebar = new EventEmitter<void>();
+
   user: any = null;
   isDark = false;
 
@@ -16,9 +19,20 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.user = this.authService.getUser();
+
+    // Theme initialization
     const saved = localStorage.getItem('theme');
-    this.isDark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved) {
+      this.isDark = saved === 'dark';
+    } else {
+      this.isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
     this.applyTheme();
+  }
+
+  // Hamburger click handler
+  onMenuClick() {
+    this.toggleSidebar.emit();
   }
 
   toggleDark() {
@@ -28,7 +42,11 @@ export class HeaderComponent implements OnInit {
   }
 
   applyTheme() {
-    document.documentElement.classList.toggle('dark', this.isDark);
+    if (this.isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   }
 
   logout() {
@@ -37,6 +55,8 @@ export class HeaderComponent implements OnInit {
 
   get initials(): string {
     if (!this.user?.name) return '?';
-    return this.user.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
+    const parts = this.user.name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
 }

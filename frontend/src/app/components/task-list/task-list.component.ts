@@ -5,8 +5,8 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
-  ChangeDetectorRef, // <-- ADDED
-  NgZone, // <-- ADDED
+  ChangeDetectorRef, 
+  NgZone,
 } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -41,8 +41,8 @@ export class TaskListComponent implements OnInit, OnChanges, OnDestroy {
     private taskService: TaskService,
     private authService: AuthService,
     private socketService: SocketService,
-    private cdr: ChangeDetectorRef, // <-- INJECTED
-    private ngZone: NgZone, // <-- INJECTED
+    private cdr: ChangeDetectorRef, 
+    private ngZone: NgZone, 
   ) {}
 
   ngOnInit(): void {
@@ -66,8 +66,6 @@ export class TaskListComponent implements OnInit, OnChanges, OnDestroy {
   // ─── Socket ────────────────────────────────────────────────────────────────
 
   private setupSocketListeners(): void {
-    // NgZone ke andar loadTasks call karna zaruri hai taaki Angular ko pata chale
-    // ki bahar se (socket se) naya data aaya hai aur UI turant update ho.
     this.subs.push(
       this.socketService.taskCreated$.subscribe(() => {
         this.ngZone.run(() => this.loadTasks());
@@ -86,14 +84,12 @@ export class TaskListComponent implements OnInit, OnChanges, OnDestroy {
   loadTasks(): void {
     this.taskService.getTasks().subscribe({
       next: (tasks) => {
-        // ngZone.run Angular ko force karta hai ki yeh code Zone ke andar hi chale
         this.ngZone.run(() => {
           this.tasks = tasks;
           this.loading = false;
           this.applyFilter();
           this.calculateStats();
 
-          // markForCheck() aur detectChanges() ka combo kisi bhi OnPush block ko tod dega
           this.cdr.markForCheck();
           this.cdr.detectChanges();
         });
@@ -136,7 +132,7 @@ export class TaskListComponent implements OnInit, OnChanges, OnDestroy {
       this.tasks = [...this.tasks];
       this.applyFilter();
       this.calculateStats();
-      this.cdr.detectChanges(); // Optimistic update ke baad UI refresh
+      this.cdr.detectChanges();
     }
     this.taskService.updateTask(task._id, { status }).subscribe({
       error: () => this.loadTasks(),
@@ -148,7 +144,7 @@ export class TaskListComponent implements OnInit, OnChanges, OnDestroy {
     this.tasks = this.tasks.filter((t) => t._id !== id);
     this.applyFilter();
     this.calculateStats();
-    this.cdr.detectChanges(); // Optimistic remove ke baad UI refresh
+    this.cdr.detectChanges();
 
     this.taskService.deleteTask(id).subscribe({
       error: () => this.loadTasks(),
@@ -231,7 +227,6 @@ export class TaskListComponent implements OnInit, OnChanges, OnDestroy {
     const csvRows = [headers.join(',')];
 
     this.tasks.forEach((t) => {
-      // Commas ko handle karne ke liye strings ko quotes mein wrap karna zaroori hai
       const row = [
         `"${t.title.replace(/"/g, '""')}"`,
         `"${(t.description || '').replace(/"/g, '""')}"`,

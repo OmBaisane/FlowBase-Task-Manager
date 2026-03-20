@@ -51,7 +51,8 @@ exports.getStats = async (req, res) => {
 // CREATE task
 exports.createTask = async (req, res) => {
   try {
-    const { title, description, priority, assignedTo, dueDate } = req.body;
+    const { title, description, projectName, priority, assignedTo, dueDate } =
+      req.body;
 
     if (!title) {
       return res.status(400).json({ message: "Title is required" });
@@ -59,6 +60,7 @@ exports.createTask = async (req, res) => {
 
     const task = await Task.create({
       title,
+      projectName: projectName || "General",
       description,
       priority: priority || "medium",
       assignedTo: assignedTo || null,
@@ -97,8 +99,17 @@ exports.updateTask = async (req, res) => {
       const { status } = req.body;
       task.status = status || task.status;
     } else {
-      const { title, description, priority, status, assignedTo, dueDate } = req.body;
+      const {
+        title,
+        description,
+        projectName,
+        priority,
+        status,
+        assignedTo,
+        dueDate,
+      } = req.body;
       if (title !== undefined) task.title = title;
+      if (projectName !== undefined) task.projectName = projectName;
       if (description !== undefined) task.description = description;
       if (priority !== undefined) task.priority = priority;
       if (status !== undefined) task.status = status;

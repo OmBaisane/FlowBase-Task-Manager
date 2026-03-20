@@ -1,12 +1,20 @@
 <div class="min-h-screen flex flex-col bg-slate-50 dark:bg-[#080d18]">
-  <app-header></app-header>
+  <app-header (toggleSidebar)="isMobileMenuOpen = !isMobileMenuOpen"></app-header>
 
-  <div class="flex flex-1 overflow-hidden">
-    <app-sidebar></app-sidebar>
+  <div class="flex flex-1 overflow-hidden relative">
+    <app-sidebar
+      [isOpen]="isMobileMenuOpen"
+      (closeSidebar)="isMobileMenuOpen = false"
+    ></app-sidebar>
 
-    <main class="flex-1 overflow-y-auto">
+    <div
+      *ngIf="isMobileMenuOpen"
+      (click)="isMobileMenuOpen = false"
+      class="fixed inset-0 bg-black/50 z-30 lg:hidden backdrop-blur-sm transition-opacity"
+    ></div>
+
+    <main class="flex-1 overflow-y-auto w-full">
       <div class="max-w-7xl mx-auto px-6 py-6">
-        <!-- Page title -->
         <div class="flex items-start justify-between mb-6">
           <div>
             <h1 class="text-xl font-extrabold text-slate-800 dark:text-white tracking-tight">
@@ -24,9 +32,7 @@
           </div>
         </div>
 
-        <!-- Analytics + Form row -->
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-5">
-          <!-- Chart card -->
           <div
             class="bg-white dark:bg-slate-800/70 rounded-2xl border border-slate-200/60 dark:border-slate-700/40 shadow-sm p-6"
           >
@@ -63,50 +69,42 @@
               [colors]="chartColors"
               centerLabel="Tasks"
               [centerValue]="stats.total"
-            >
-            </app-doughnut-chart>
+            ></app-doughnut-chart>
 
-            <!-- Legend -->
             <div class="mt-5 space-y-2">
               <div class="flex items-center justify-between text-xs">
-                <span class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                  <span class="w-2.5 h-2.5 rounded-full bg-slate-400 inline-block"></span>Todo
-                </span>
-                <span class="font-bold tabular-nums text-slate-700 dark:text-slate-300">{{
+                <span class="flex items-center gap-2 text-slate-500 dark:text-slate-400"
+                  ><span class="w-2.5 h-2.5 rounded-full bg-slate-400 inline-block"></span
+                  >Todo</span
+                ><span class="font-bold tabular-nums text-slate-700 dark:text-slate-300">{{
                   stats.todo
                 }}</span>
               </div>
               <div class="flex items-center justify-between text-xs">
-                <span class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                  <span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>In Progress
-                </span>
-                <span class="font-bold tabular-nums text-slate-700 dark:text-slate-300">{{
+                <span class="flex items-center gap-2 text-slate-500 dark:text-slate-400"
+                  ><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>In
+                  Progress</span
+                ><span class="font-bold tabular-nums text-slate-700 dark:text-slate-300">{{
                   stats.inProgress
                 }}</span>
               </div>
               <div class="flex items-center justify-between text-xs">
-                <span class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span
-                  >Completed
-                </span>
-                <span class="font-bold tabular-nums text-slate-700 dark:text-slate-300">{{
+                <span class="flex items-center gap-2 text-slate-500 dark:text-slate-400"
+                  ><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span
+                  >Completed</span
+                ><span class="font-bold tabular-nums text-slate-700 dark:text-slate-300">{{
                   stats.completed
                 }}</span>
               </div>
             </div>
           </div>
 
-          <!-- Task form -->
           <div class="xl:col-span-2">
             <app-task-form (taskCreated)="onTaskCreated()"></app-task-form>
           </div>
         </div>
 
-        <!-- Task list -->
         <app-task-list [refresh]="refreshTasks"></app-task-list>
-
-        <!-- User Management -->
-        <app-user-management></app-user-management>
       </div>
     </main>
   </div>

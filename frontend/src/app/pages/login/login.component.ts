@@ -29,8 +29,14 @@ export class LoginComponent {
 
     this.authService.login(safeEmail, safePassword).subscribe({
       next: (res) => {
+        const userRole = res.user?.role || this.authService.getUser()?.role;
+
+        if (userRole === 'admin') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
         this.loading = false;
-        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.loading = false;
