@@ -22,6 +22,12 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'tasks',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/my-tasks/my-tasks.component').then((m) => m.MyTasksComponent),
+  },
+  {
     path: 'profile',
     canActivate: [authGuard],
     loadComponent: () =>

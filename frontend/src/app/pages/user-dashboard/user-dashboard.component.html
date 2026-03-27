@@ -2,8 +2,10 @@
   <app-header (toggleSidebar)="isMobileMenuOpen = !isMobileMenuOpen"></app-header>
 
   <div class="flex flex-1 overflow-hidden relative">
-    <app-sidebar [isOpen]="isMobileMenuOpen" (closeSidebar)="isMobileMenuOpen = false">
-    </app-sidebar>
+    <app-sidebar
+      [isOpen]="isMobileMenuOpen"
+      (closeSidebar)="isMobileMenuOpen = false"
+    ></app-sidebar>
 
     <div
       *ngIf="isMobileMenuOpen"
@@ -13,82 +15,215 @@
 
     <main class="flex-1 overflow-y-auto w-full">
       <div class="max-w-6xl mx-auto px-6 py-6">
-        <div class="flex items-start justify-between mb-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
-            <h1 class="text-xl font-extrabold text-slate-800 dark:text-white tracking-tight">
-              My Tasks
+            <h1 class="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight">
+              System Overview
             </h1>
-            <p class="text-sm text-slate-400 dark:text-slate-500 mt-0.5">
-              Welcome back{{ user?.name ? ', ' + user.name : '' }} — your tasks update in real-time
+            <p class="text-sm text-slate-400 dark:text-slate-500 mt-1">
+              Welcome, <span class="text-blue-500 font-semibold">{{ user?.name || 'User' }}</span
+              >. Monitoring real-time task distribution.
             </p>
           </div>
-          <div
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-          >
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
-            Live sync
+          <div class="flex items-center gap-3">
+            <div
+              class="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/40 shadow-sm"
+            >
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                Server Status
+              </p>
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs font-bold text-slate-700 dark:text-slate-300 italic"
+                  >Connected</span
+                >
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-5 mb-5">
-          <div class="lg:col-span-3 grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+          <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div
-              class="bg-white dark:bg-slate-800/70 rounded-2xl p-5 border border-slate-200/60 dark:border-slate-700/40 shadow-sm"
+              class="group relative bg-white dark:bg-slate-800/70 rounded-2xl p-6 border border-slate-200/60 dark:border-slate-700/40 shadow-sm hover:shadow-md transition-all"
             >
-              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">
-                Total
+              <div
+                class="absolute top-4 right-4 w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-500"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+                Queue
               </p>
-              <p class="text-3xl font-extrabold text-slate-800 dark:text-white tabular-nums">
+              <p class="text-4xl font-extrabold text-slate-800 dark:text-white">
                 {{ stats.total }}
               </p>
-              <p class="text-xs text-slate-400 mt-1">assigned tasks</p>
+              <p class="text-[10px] text-slate-400 mt-2 italic">Total active assignments</p>
             </div>
+
             <div
-              class="bg-white dark:bg-slate-800/70 rounded-2xl p-5 border border-blue-100 dark:border-blue-500/20 shadow-sm"
+              class="group relative bg-white dark:bg-slate-800/70 rounded-2xl p-6 border border-blue-100 dark:border-blue-500/20 shadow-sm hover:shadow-md transition-all"
             >
-              <p class="text-[11px] font-bold text-blue-400 uppercase tracking-widest mb-2">
-                Active
+              <div
+                class="absolute top-4 right-4 w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-400/10 flex items-center justify-center text-blue-400"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <p class="text-[11px] font-bold text-blue-400 uppercase tracking-widest mb-1">
+                In Velocity
               </p>
-              <p class="text-3xl font-extrabold text-blue-600 dark:text-blue-400 tabular-nums">
+              <p class="text-4xl font-extrabold text-blue-600 dark:text-blue-400">
                 {{ stats.inProgress }}
               </p>
-              <p class="text-xs text-blue-400/70 mt-1">in progress</p>
+              <div class="mt-3 h-1.5 w-full bg-blue-100 dark:bg-slate-700 rounded-full">
+                <div
+                  class="h-full bg-blue-500 rounded-full"
+                  [style.width.%]="(stats.inProgress / stats.total) * 100"
+                ></div>
+              </div>
             </div>
+
             <div
-              class="bg-white dark:bg-slate-800/70 rounded-2xl p-5 border border-emerald-100 dark:border-emerald-500/20 shadow-sm"
+              class="group relative bg-white dark:bg-slate-800/70 rounded-2xl p-6 border border-emerald-100 dark:border-emerald-500/20 shadow-sm hover:shadow-md transition-all"
             >
-              <p class="text-[11px] font-bold text-emerald-500 uppercase tracking-widest mb-2">
-                Done
-              </p>
-              <p
-                class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums"
+              <div
+                class="absolute top-4 right-4 w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-500"
               >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M5 13l4 4L19 7"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <p class="text-[11px] font-bold text-emerald-500 uppercase tracking-widest mb-1">
+                Efficiency
+              </p>
+              <p class="text-4xl font-extrabold text-emerald-600 dark:text-emerald-400">
                 {{ stats.completed }}
               </p>
-              <p class="text-xs text-emerald-500/70 mt-1">completed</p>
+              <div class="mt-3 h-1.5 w-full bg-emerald-100 dark:bg-slate-700 rounded-full">
+                <div
+                  class="h-full bg-emerald-500 rounded-full"
+                  [style.width.%]="(stats.completed / stats.total) * 100"
+                ></div>
+              </div>
             </div>
           </div>
 
           <div
-            class="bg-white dark:bg-slate-800/70 rounded-2xl border border-slate-200/60 dark:border-slate-700/40 shadow-sm p-5"
+            class="lg:col-span-4 bg-white dark:bg-slate-800/70 rounded-2xl border border-slate-200/60 dark:border-slate-700/40 shadow-sm p-6 flex flex-col items-center"
           >
-            <p
-              class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3"
-            >
-              Distribution
-            </p>
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 self-start">
+              Workflow Split
+            </h3>
             <app-doughnut-chart
               [labels]="chartLabels"
               [data]="chartData"
               [colors]="chartColors"
-              centerLabel="Tasks"
+              centerLabel="Load"
               [centerValue]="stats.total"
-            >
-            </app-doughnut-chart>
+            ></app-doughnut-chart>
           </div>
         </div>
 
-        <app-task-list [refresh]="refreshTasks"></app-task-list>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div
+            class="bg-linear-to-br from-slate-800 to-slate-900 dark:from-slate-800/40 dark:to-[#0b1221] rounded-2xl p-8 text-white border border-slate-700/50 shadow-xl overflow-hidden relative group"
+          >
+            <div
+              class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all"
+            ></div>
+            <h2 class="text-xl font-bold mb-2">Ready to work? ⚡</h2>
+            <p class="text-slate-400 text-sm mb-6 max-w-70">
+              Your daily tasks are synchronized with the central engine. Update your progress
+              instantly via the task manager.
+            </p>
+            <a
+              routerLink="/tasks"
+              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold shadow-lg shadow-blue-600/20 transition-all cursor-pointer"
+            >
+              Go to My Tasks
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </div>
+
+          <div
+            class="bg-white dark:bg-slate-800/70 rounded-2xl border border-slate-200/60 dark:border-slate-700/40 shadow-sm p-6"
+          >
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                Live Activity Stream
+              </h3>
+              <span
+                class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                >SESSION ACTIVE</span
+              >
+            </div>
+            <div class="space-y-4">
+              <div class="flex items-start gap-3">
+                <div
+                  class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shadow-[0_0_8px_rgba(59,130,246,0.5)]"
+                ></div>
+                <div>
+                  <p class="text-xs font-bold text-slate-700 dark:text-slate-200">
+                    System Handshake Complete
+                  </p>
+                  <p class="text-[10px] text-slate-400 mt-0.5">
+                    Socket.IO connection established with master server.
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div
+                  class="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+                ></div>
+                <div>
+                  <p class="text-xs font-bold text-slate-700 dark:text-slate-200">
+                    State Synced Successfully
+                  </p>
+                  <p class="text-[10px] text-slate-400 mt-0.5">
+                    Dashboard analytics updated to latest database snapshot.
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 opacity-50">
+                <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 mt-1.5"></div>
+                <div>
+                  <p class="text-xs font-bold text-slate-700 dark:text-slate-200">
+                    Listening for Broadcasts...
+                  </p>
+                  <p class="text-[10px] text-slate-400 mt-0.5">
+                    Waiting for task updates from team members.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   </div>

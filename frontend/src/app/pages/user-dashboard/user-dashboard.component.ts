@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core'; 
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import { TaskListComponent } from '../../components/task-list/task-list.component';
 import { DoughnutChartComponent } from '../../components/chart/doughnut-chart.component';
 import { SocketService } from '../../services/socket.service';
 import { TaskService } from '../../services/task.service';
@@ -12,13 +12,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [
-    CommonModule,
-    HeaderComponent,
-    SidebarComponent,
-    TaskListComponent,
-    DoughnutChartComponent,
-  ],
+  imports: [CommonModule, RouterModule, HeaderComponent, SidebarComponent, DoughnutChartComponent],
   templateUrl: './user-dashboard.component.html',
 })
 export class UserDashboardComponent implements OnInit, OnDestroy {
