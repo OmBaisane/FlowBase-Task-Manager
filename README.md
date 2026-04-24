@@ -1,4 +1,4 @@
-# ⚡ FlowBase - Real-Time Task Management System
+# ⚡ FlowBase - Task Manager
 
 FlowBase is a modern, real-time task management web application designed to streamline team collaboration. Built with a robust full-stack architecture, it features instant task synchronization, role-based access control, and a premium responsive UI.
 
