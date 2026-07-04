@@ -134,12 +134,6 @@ ng serve
 
 ---
 
-## 📸 Screenshots
-
-> Add desktop, dashboard and mobile screenshots here.
-
----
-
 ## 📚 Key Learnings
 
 - Angular application architecture
