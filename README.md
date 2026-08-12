@@ -161,7 +161,7 @@ ng serve
 
 - 🌐 Portfolio: https://portfolio-nine-phi-ry8fa70ws1.vercel.app
 - 💻 GitHub: https://github.com/OmBaisane
-- 💼 LinkedIn: https://www.linkedin.com/in/om-baisane-b96625346
+- 💼 LinkedIn: https://www.linkedin.com/in/om-baisane
 - 📧 Email: ombaisane29@gmail.com
 
 ---
